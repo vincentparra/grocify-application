@@ -1,6 +1,6 @@
 import express from "express";
-import LoginController from "../controller/LoginController.js";
-import UserRegistration from "../controller/UserRegistration.js";
+import LoginController from "../controller/authentication/LoginController.js";
+import UserRegistration from "../controller/authentication/UserRegistration.js";
 const router = express.Router();
 
 router.post("/login", LoginController.login);
