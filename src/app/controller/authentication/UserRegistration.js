@@ -1,8 +1,8 @@
 import express from "express";
-import DB from "../config/db.js";
-import Person from "../model/Person/PersonModel.js";
+import DB from "../../config/db.js";
+import Person from "../../model/Person/PersonModel.js";
 import bcrypt from "bcrypt";
-import User from "../model/User/UserModel.js";
+import User from "../../model/User/UserModel.js";
 
 async function Register(req, res) {
   try {

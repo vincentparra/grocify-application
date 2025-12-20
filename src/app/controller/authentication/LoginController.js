@@ -1,8 +1,8 @@
-import DB from "../config/db.js";
-import User from "../model/User/UserModel.js";
+import DB from "../../config/db.js";
+import User from "../../model/User/UserModel.js";
 import bcrypt from "bcrypt";
-import GenerateToken from "../utils/security/JWTProvider.js";
-import { UserPrincipal } from "../model/User/Principal/UserPrincipal.js";
+import JWTProvider from "../../utils/security/JWTProvider.js";
+import { UserPrincipal } from "../../model/User/Principal/UserPrincipal.js";
 
 async function login(req, res) {
   try {
@@ -41,7 +41,7 @@ async function login(req, res) {
         username,
         person_id: user.person_id,
       });
-      const token = GenerateToken(principal);
+      const token = JWTProvider.GenerateToken(principal);
       res.setHeader("JWT-TOKEN", token);
       return res.json({
         message: "login successfully",
