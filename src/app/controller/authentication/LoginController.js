@@ -3,7 +3,7 @@ import User from "../../model/User/UserModel.js";
 import bcrypt from "bcrypt";
 import JWTProvider from "../../utils/security/JWTProvider.js";
 import { UserPrincipal } from "../../model/User/Principal/UserPrincipal.js";
-
+import UserRepository from "../../repository/user/UserRepository.js";
 async function login(req, res) {
   try {
     DB.Connection();
@@ -17,7 +17,7 @@ async function login(req, res) {
       res.status(400).json({ message: "Password is required" });
     }
 
-    const user = await User.findOne({ username });
+    const user = await UserRepository.findUserByUsername(username);
 
     if (user === null) {
       res.status(404).json({ message: "User not found" });
@@ -29,18 +29,14 @@ async function login(req, res) {
     }
 
     if (isMatch) {
-      const userWithPerson = await User.findByIdAndUpdate(
-        user._id,
-        { last_login: new Date() },
-        { new: true }
-      ).populate("person_id");
+      const userWithPerson = await UserRepository.findUserByIdandUpdate(
+        user._id
+      );
 
-      const { _id, username, person_id, last_login } = userWithPerson;
-      const principal = UserPrincipal({
-        _id,
-        username,
-        person_id: user.person_id,
-      });
+      const { _id, username, person, last_login } = userWithPerson;
+
+      const principal = UserPrincipal(user);
+
       const token = JWTProvider.GenerateToken(principal);
       res.setHeader("JWT-TOKEN", token);
       return res.json({
@@ -48,7 +44,7 @@ async function login(req, res) {
         userId: _id,
         username,
         last_login,
-        person: person_id,
+        person: person,
       });
     }
   } catch (error) {

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import Person from "../Person/PersonModel.js";
 
 const UserSchema = mongoose.Schema({
-  person_id: {
+  person: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Person",
     required: true,

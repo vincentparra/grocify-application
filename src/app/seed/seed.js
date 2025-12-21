@@ -9,6 +9,8 @@ import Person from "../model/Person/PersonModel.js";
 async function seed() {
   DB.Connection();
 
+  await User.deleteMany({});
+  await Person.deleteMany({});
   await Ingredients.deleteMany({});
   await Instruction.deleteMany({});
   await Recipes.deleteMany({});
@@ -20,14 +22,12 @@ async function seed() {
       last_name: "Doe",
       email: "jdMalasakit@gmail.com",
       birth_date: "2003-09-11",
-      username: "malasAtsakit",
-      password: "securePassword123",
     },
   ]);
   const hashedPassword = await bcrypt.hash("hashedPassword123", 12);
   const users = await User.insertMany([
     {
-      person_id: person[0]._id,
+      person: person[0]._id,
       username: "malaSakit",
       password: hashedPassword,
     },
@@ -43,15 +43,15 @@ async function seed() {
   ]);
   const recipes = await Recipes.insertMany([
     {
-      user_id: users[0]._id,
-      ingredients_id: ingredientsList[0]._id,
-      instruction_id: instructionsList[0]._id,
+      user: users[0]._id,
+      ingredients: ingredientsList[0]._id,
+      instruction: instructionsList[0]._id,
       title: "Simple Cake",
     },
     {
-      user_id: users[0]._id,
-      ingredients_id: ingredientsList[0]._id,
-      instruction_id: instructionsList[0]._id,
+      user: users[0]._id,
+      ingredients: ingredientsList[1]._id,
+      instruction: instructionsList[1]._id,
       title: "Tomato Stir Fry",
     },
   ]);
