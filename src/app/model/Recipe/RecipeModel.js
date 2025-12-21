@@ -1,15 +1,15 @@
 import mongoose, { mongo } from "mongoose";
 import User from "../User/UserModel.js";
 const RecipesSchema = mongoose.Schema({
-  user_id: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  instruction_id: {
+  instruction: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Instruction",
   },
-  ingredients_id: {
+  ingredients: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Ingredients",
   },

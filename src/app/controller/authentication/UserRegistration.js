@@ -16,14 +16,19 @@ async function Register(req, res) {
       password,
     } = req.body;
     DB.Connection();
+
     const existingUser = await User.findOne({ username });
+
     const existingEmail = await Person.findOne({ email });
+
     if (existingUser) {
       return res.status(400).json({ message: "Username already exists" });
     }
+
     if (existingEmail) {
       return res.status(400).json({ message: "Email already exists" });
     }
+
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const person = await Person.create({
@@ -33,12 +38,17 @@ async function Register(req, res) {
       email,
       birth_date,
     });
+
     const user = await User.create({
       username,
       password: hashedPassword,
-      person_id: person._id,
+      person: person._id,
       created_at: new Date(),
     });
+
+    if (!user) {
+      res.status(501).json({ message: "Internal service error" });
+    }
 
     return res.status(201).json({
       message: "Registration successful",
