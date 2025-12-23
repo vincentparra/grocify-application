@@ -1,10 +1,8 @@
-import DB from "../../config/db.js";
-import User from "../../model/User/UserModel.js";
-import Recipes from "../../model/Recipe/RecipeModel.js";
+import DB from "../.././utils/security/config/db.js";
 import RecipeRepository from "../../repository/recipe/RecipeRepository.js";
 import UserRepository from "../../repository/user/UserRepository.js";
 
-async function findRecipe(req, res) {
+async function findAllRecipe(req, res) {
   try {
     DB.Connection();
     const { username } = req.principal.UserPrincipal;
@@ -63,4 +61,26 @@ async function createRecipe(req, res) {
   }
 }
 
-export default { findRecipe, createRecipe };
+async function searchRecipe(req, res) {
+  DB.Connection();
+  const title = req.params.title.trim();
+  console.log(title);
+  const searchRecipe = await RecipeRepository.findRecipeByTitle(title);
+  if (!searchRecipe || searchRecipe.length === 0) {
+    res.status(404).json({ message: "Recipe not found" });
+  }
+  const recipe = searchRecipe.map((r) => ({
+    name:
+      r.user.person.first_name +
+      " " +
+      r.user.person.middle_name +
+      " " +
+      r.user.person.last_name,
+    instruction: r.instruction,
+    ingredients: r.ingredients,
+    title: r.title,
+  }));
+  res.status(200).json(recipe);
+}
+
+export default { findAllRecipe, createRecipe, searchRecipe };
