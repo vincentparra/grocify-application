@@ -1,4 +1,4 @@
-import DB from "../.././utils/security/config/db.js";
+import DB from "../../utils/config/db.js";
 import RecipeRepository from "../../repository/recipe/RecipeRepository.js";
 import UserRepository from "../../repository/user/UserRepository.js";
 

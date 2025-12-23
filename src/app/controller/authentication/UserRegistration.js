@@ -1,5 +1,5 @@
 import express from "express";
-import DB from "../../../app/utils/security/config/db.js";
+import DB from "../../../app/utils/config/db.js";
 import Person from "../../model/Person/PersonModel.js";
 import bcrypt from "bcrypt";
 import User from "../../model/User/UserModel.js";
