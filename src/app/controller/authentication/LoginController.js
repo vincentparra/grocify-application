@@ -1,4 +1,4 @@
-import DB from "../../config/db.js";
+import DB from "../../../app/utils/security/config/db.js";
 import User from "../../model/User/UserModel.js";
 import bcrypt from "bcrypt";
 import JWTProvider from "../../utils/security/JWTProvider.js";

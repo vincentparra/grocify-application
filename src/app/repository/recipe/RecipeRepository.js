@@ -45,4 +45,25 @@ async function createRecipe(user, description, ingredients, title) {
   });
 }
 
-export default { findRecipebyUserName, createRecipe };
+async function findRecipeByTitle(title) {
+  return await Recipes.find({ title })
+    .select("user instruction ingredients title -_id")
+    .populate({
+      path: "user",
+      select: "person",
+      populate: {
+        path: "person",
+        select: "-_id first_name middle_name last_name",
+      },
+    })
+    .populate({
+      path: "instruction",
+      select: "-_id description",
+    })
+    .populate({
+      path: "ingredients",
+      select: "-_id ingredients",
+    });
+}
+
+export default { findRecipebyUserName, createRecipe, findRecipeByTitle };
