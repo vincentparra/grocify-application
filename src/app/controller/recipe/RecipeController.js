@@ -40,7 +40,7 @@ async function createRecipe(req, res) {
     const user = await UserRepository.findUserByUsername(username);
     if (!user) {
       return res.status(404).json({
-        message: "User no found",
+        message: "User not found",
       });
     }
 
