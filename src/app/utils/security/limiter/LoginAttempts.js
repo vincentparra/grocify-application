@@ -1,6 +1,6 @@
 import rateLimit from "express-rate-limit";
 const loginAttemptLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
+  windowMs: 2 * 60 * 1000,
   max: 3,
   standardHeaders: true,
   legacyHeaders: false,
