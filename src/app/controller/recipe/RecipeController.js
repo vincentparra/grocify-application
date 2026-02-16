@@ -11,7 +11,7 @@ async function findAllRecipe(req, res) {
     const { username } = req.principal.UserPrincipal;
     const userRecipe = await RecipeRepository.findRecipebyUserName(
       username,
-      res
+      res,
     );
     if (userRecipe.length === 0) {
       return res.status(404).json({ message: "No recipe found for the user" });
@@ -51,7 +51,7 @@ async function createRecipe(req, res) {
       user,
       description,
       ingredients,
-      title
+      title,
     );
     if (!createRecipe) {
       return res.status(400).json({
@@ -89,7 +89,22 @@ async function searchRecipe(req, res) {
 async function updateRecipe(req, res) {
   DB.Connection();
   const { description, ingredients, title } = req.body;
+
   const recipe = await RecipeRepository.findRecipeById(req.params.id);
+
+  if (!recipe) {
+    return res.status(404).json({ message: "Recipe not found" });
+  }
+
+  if (
+    (description === "" && ingredients === "" && title === "") ||
+    (description === undefined &&
+      ingredients === undefined &&
+      title === undefined)
+  ) {
+    return res.status(400).json({ message: "No fields to update" });
+  }
+
   if (description && ingredients && title) {
     try {
       const instructionId = recipe.instruction;
@@ -98,17 +113,17 @@ async function updateRecipe(req, res) {
       const updatedInstruction = await Instruction.findOneAndUpdate(
         { _id: instructionId },
         { description },
-        { new: true }
+        { new: true },
       );
       const updatedIngredients = await Ingredients.findOneAndUpdate(
         { _id: ingredientsId },
         { ingredients },
-        { new: true }
+        { new: true },
       );
       const updatedRecipe = await Recipes.findOneAndUpdate(
         { _id: req.params.id },
         { title },
-        { new: true }
+        { new: true },
       );
 
       res.status(200).json({
@@ -133,7 +148,7 @@ async function updateRecipe(req, res) {
         const updatedInstruction = await Instruction.findOneAndUpdate(
           { _id: instructionId },
           { description },
-          { new: true }
+          { new: true },
         );
 
         if (!updatedInstruction) {
@@ -162,13 +177,13 @@ async function updateRecipe(req, res) {
         const updatedIngredients = await Ingredients.findOneAndUpdate(
           { _id: ingredientsId },
           { ingredients },
-          { new: true }
+          { new: true },
         );
         if (updatedIngredients) {
           const updatedIngredients = await Ingredients.findOneAndUpdate(
             { _id: ingredientsId },
             { ingredients },
-            { new: true }
+            { new: true },
           );
           return res.status(200).json({
             message: "Ingredients updated successfully",
@@ -191,7 +206,7 @@ async function updateRecipe(req, res) {
       const updatedRecipe = await Recipes.findOneAndUpdate(
         { _id: req.params.id },
         { title },
-        { new: true }
+        { new: true },
       );
       return res.status(200).json({
         message: "Title updated successfully",
