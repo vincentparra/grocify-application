@@ -90,12 +90,6 @@ async function updateRecipe(req, res) {
   DB.Connection();
   const { description, ingredients, title } = req.body;
 
-  const recipe = await RecipeRepository.findRecipeById(req.params.id);
-
-  if (!recipe) {
-    return res.status(404).json({ message: "Recipe not found" });
-  }
-
   if (
     (description === "" && ingredients === "" && title === "") ||
     (description === undefined &&
@@ -103,6 +97,12 @@ async function updateRecipe(req, res) {
       title === undefined)
   ) {
     return res.status(400).json({ message: "No fields to update" });
+  }
+
+  const recipe = await RecipeRepository.findRecipeById(req.params.id);
+
+  if (!recipe) {
+    return res.status(404).json({ message: "Recipe not found" });
   }
 
   if (description && ingredients && title) {
