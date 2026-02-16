@@ -2,6 +2,7 @@ import Recipes from "../../model/Recipe/RecipeModel.js";
 import User from "../../model/User/UserModel.js";
 import Ingredients from "../../model/Ingedients/IngredientsModel.js";
 import Instruction from "../../model/Instruction/InstructionModel.js";
+
 async function findRecipebyUserName(username, res) {
   const user = await User.findOne({ username });
   if (!user) {
@@ -65,5 +66,12 @@ async function findRecipeByTitle(title) {
       select: "-_id ingredients",
     });
 }
-
-export default { findRecipebyUserName, createRecipe, findRecipeByTitle };
+async function findRecipeById(id) {
+  return await Recipes.findOne({ _id: id });
+}
+export default {
+  findRecipebyUserName,
+  createRecipe,
+  findRecipeByTitle,
+  findRecipeById,
+};
