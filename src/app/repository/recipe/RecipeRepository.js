@@ -20,7 +20,7 @@ async function findRecipebyUserName(username, res) {
     })
     .populate({
       path: "instruction",
-      select: "-_id description",
+      select: "description",
     })
     .populate({
       path: "ingredients",
@@ -48,7 +48,7 @@ async function createRecipe(user, description, ingredients, title) {
 
 async function findRecipeByTitle(title) {
   return await Recipes.find({ title })
-    .select("user instruction ingredients title -_id")
+    .select("user instruction ingredients title")
     .populate({
       path: "user",
       select: "person",

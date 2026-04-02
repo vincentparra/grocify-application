@@ -67,11 +67,13 @@ async function createRecipe(req, res) {
 async function searchRecipe(req, res) {
   DB.Connection();
   const title = req.params.title.trim();
-  console.log(title);
+
   const searchRecipe = await RecipeRepository.findRecipeByTitle(title);
+
   if (!searchRecipe || searchRecipe.length === 0) {
     res.status(404).json({ message: "Recipe not found" });
   }
+
   const recipe = searchRecipe.map((r) => ({
     name:
       r.user.person.first_name +
@@ -82,6 +84,7 @@ async function searchRecipe(req, res) {
     instruction: r.instruction,
     ingredients: r.ingredients,
     title: r.title,
+    id: r._id,
   }));
   res.status(200).json(recipe);
 }
@@ -115,11 +118,13 @@ async function updateRecipe(req, res) {
         { description },
         { new: true },
       );
+
       const updatedIngredients = await Ingredients.findOneAndUpdate(
         { _id: ingredientsId },
         { ingredients },
         { new: true },
       );
+
       const updatedRecipe = await Recipes.findOneAndUpdate(
         { _id: req.params.id },
         { title },
@@ -173,6 +178,7 @@ async function updateRecipe(req, res) {
   if (ingredients && !title && !description) {
     try {
       const ingredientsId = recipe.ingredients;
+      console.log("ON ingredients update: ", recipe.ingredients);
       if (ingredientsId) {
         const updatedIngredients = await Ingredients.findOneAndUpdate(
           { _id: ingredientsId },
