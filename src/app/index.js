@@ -6,8 +6,8 @@ const app = express();
 dotenv.config();
 
 app.use(express.json());
-app.use("/auth", AuthRoute);
-app.use("/recipe", RecipeRoute);
+app.use("/api/auth", AuthRoute);
+app.use("/api/recipe", RecipeRoute);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running on http://localhost:${process.env.PORT}`);
