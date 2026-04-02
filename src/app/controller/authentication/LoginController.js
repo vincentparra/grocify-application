@@ -30,7 +30,7 @@ async function login(req, res) {
 
     if (isMatch) {
       const userWithPerson = await UserRepository.findUserByIdandUpdate(
-        user._id
+        user._id,
       );
 
       const { _id, username, person, last_login } = userWithPerson;
