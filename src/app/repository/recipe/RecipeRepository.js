@@ -69,9 +69,33 @@ async function findRecipeByTitle(title) {
 async function findRecipeById(id) {
   return await Recipes.findOne({ _id: id });
 }
+async function updateRecipe(id, title) {
+  return await Recipes.findOneAndUpdate(
+    { _id: id },
+    { title: title },
+    { new: true },
+  );
+}
+async function updatedInstruction(id, instruction) {
+  return await Instruction.findOneAndUpdate(
+    { _id: id },
+    { instruction: instruction },
+    { new: true },
+  );
+}
+async function updatedIngredients(id, ingredients) {
+  return await Ingredients.findOneAndUpdate(
+    { _id: id },
+    { ingredients: ingredients },
+    { new: true },
+  );
+}
 export default {
   findRecipebyUserName,
   createRecipe,
   findRecipeByTitle,
   findRecipeById,
+  updateRecipe,
+  updatedInstruction,
+  updatedIngredients,
 };
