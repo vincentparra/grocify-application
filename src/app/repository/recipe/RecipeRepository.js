@@ -20,7 +20,7 @@ async function findRecipebyUserName(username, res) {
     })
     .populate({
       path: "instruction",
-      select: "description",
+      select: "instruction",
     })
     .populate({
       path: "ingredients",
@@ -28,9 +28,9 @@ async function findRecipebyUserName(username, res) {
     });
 }
 
-async function createRecipe(user, description, ingredients, title) {
-  const instruction = await Instruction.create({ description });
-  if (!instruction) {
+async function createRecipe(user, instruction, ingredients, title) {
+  const instructions = await Instruction.create({ instruction });
+  if (!instructions) {
     return res.status(401).json({ message: "failed to create instruction" });
   }
   const createdIngredients = await Ingredients.create({ ingredients });
@@ -40,7 +40,7 @@ async function createRecipe(user, description, ingredients, title) {
 
   return await Recipes.create({
     user: user._id,
-    instruction: instruction._id,
+    instruction: instructions._id,
     ingredients: createdIngredients._id,
     title,
   });
@@ -59,7 +59,7 @@ async function findRecipeByTitle(title) {
     })
     .populate({
       path: "instruction",
-      select: "-_id description",
+      select: "-_id instruction",
     })
     .populate({
       path: "ingredients",
