@@ -38,7 +38,7 @@ async function findAllRecipe(req, res) {
 async function createRecipe(req, res) {
   try {
     DB.Connection();
-    const { description, ingredients, title } = req.body;
+    const { instruction, ingredients, title } = req.body;
     const { username } = req.principal.UserPrincipal;
     const user = await UserRepository.findUserByUsername(username);
     if (!user) {
@@ -49,7 +49,7 @@ async function createRecipe(req, res) {
 
     const createdRecipe = await RecipeRepository.createRecipe(
       user,
-      description,
+      instruction,
       ingredients,
       title,
     );
@@ -91,11 +91,11 @@ async function searchRecipe(req, res) {
 
 async function updateRecipe(req, res) {
   DB.Connection();
-  const { description, ingredients, title } = req.body;
+  const { instruction, ingredients, title } = req.body;
 
   if (
-    (description === "" && ingredients === "" && title === "") ||
-    (description === undefined &&
+    (instruction === "" && ingredients === "" && title === "") ||
+    (instruction === undefined &&
       ingredients === undefined &&
       title === undefined)
   ) {
@@ -108,118 +108,88 @@ async function updateRecipe(req, res) {
     return res.status(404).json({ message: "Recipe not found" });
   }
 
-  if (description && ingredients && title) {
+  const instructionId = recipe.instruction;
+  const ingredientsId = recipe.ingredients;
+  const updates = {};
+  if (instruction) {
+    updates.instruction = instruction;
+  }
+
+  if (instruction && ingredients && title) {
     try {
-      const instructionId = recipe.instruction;
-      const ingredientsId = recipe.ingredients;
-
-      const updatedInstruction = await Instruction.findOneAndUpdate(
+      updates.updatedInstruction = await Instruction.findOneAndUpdate(
         { _id: instructionId },
-        { description },
+        { instruction },
         { new: true },
       );
 
-      const updatedIngredients = await Ingredients.findOneAndUpdate(
-        { _id: ingredientsId },
-        { ingredients },
-        { new: true },
+      updates.updatedIngredients = await RecipeRepository.updatedIngredients(
+        ingredientsId,
+        ingredients,
       );
 
-      const updatedRecipe = await Recipes.findOneAndUpdate(
-        { _id: req.params.id },
-        { title },
-        { new: true },
+      updates.instructionupdatedRecipe = await RecipeRepository.updateRecipe(
+        req.params.id,
+        title,
       );
 
       res.status(200).json({
         message: "Recipe updated successfully",
         data: {
-          instruction: updatedInstruction,
-          ingredients: updatedIngredients,
-          recipe: updatedRecipe,
+          instruction: updates.updatedInstruction,
+          ingredients: updates.updatedIngredients,
+          recipe: updates.updatedRecipe,
         },
       });
     } catch (error) {
-      res
+      return res
         .status(500)
         .json({ message: "INTERNAL SERVER ERROR", error: error.message });
     }
   }
-  if (description && !ingredients && !title) {
-    try {
-      const instructionId = recipe.instruction;
 
-      if (instructionId) {
-        const updatedInstruction = await Instruction.findOneAndUpdate(
-          { _id: instructionId },
-          { description },
-          { new: true },
-        );
-
-        if (!updatedInstruction) {
-          return res.status(404).json({ message: "Instruction not found" });
-        }
-
-        return res.status(200).json({
-          message: "Instruction updated successfully",
-          data: updatedInstruction,
-        });
-      } else {
-        return res
-          .status(400)
-          .json({ message: "No instruction linked to this recipe" });
-      }
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: "INTERNAL SERVER ERROR", error: error.message });
-    }
-  }
-  if (ingredients && !title && !description) {
+  if (title) {
     try {
-      const ingredientsId = recipe.ingredients;
-      console.log("ON ingredients update: ", recipe.ingredients);
-      if (ingredientsId) {
-        const updatedIngredients = await Ingredients.findOneAndUpdate(
-          { _id: ingredientsId },
-          { ingredients },
-          { new: true },
-        );
-        if (updatedIngredients) {
-          const updatedIngredients = await Ingredients.findOneAndUpdate(
-            { _id: ingredientsId },
-            { ingredients },
-            { new: true },
-          );
-          return res.status(200).json({
-            message: "Ingredients updated successfully",
-            data: updatedIngredients,
-          });
-        }
-      } else {
-        return res
-          .status(400)
-          .json({ message: "No ingredients linked to this recipe" });
-      }
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: "INTERNAL SERVER ERROR", error: error.message });
-    }
-  }
-  if (title && !ingredients && !description) {
-    try {
-      const updatedRecipe = await Recipes.findOneAndUpdate(
-        { _id: req.params.id },
-        { title },
-        { new: true },
+      updates.updatedRecipe = await RecipeRepository.updateRecipe(
+        req.params.id,
+        title,
       );
       return res.status(200).json({
-        message: "Title updated successfully",
-        data: updatedRecipe,
+        message: "Title Updated Successfully",
+        data: { Title: updates.updatedRecipe },
+      });
+    } catch (error) {}
+  }
+
+  if (ingredients) {
+    try {
+      updates.updatedIngredients = await RecipeRepository.updatedIngredients(
+        ingredientsId,
+        ingredients,
+      );
+      return res.status(200).json({
+        message: "Ingredients Updated Successfully",
+        data: { ingredients: updates.updatedIngredients },
       });
     } catch (error) {
-      res
+      return res
+        .status(500)
+        .json({ message: "INTERNAL SERVER ERROR", error: error.message });
+    }
+  }
+
+  if (instruction) {
+    try {
+      updates.updatedInstruction = await RecipeRepository.updatedInstruction(
+        instructionId,
+        instruction,
+      );
+      return res.status(200).json({
+        message: "Instruction Updated Successfully",
+        data: { instruction: updates.updatedInstruction },
+      });
+    } catch (error) {
+      return res
         .status(500)
         .json({ message: "INTERNAL SERVER ERROR", error: error.message });
     }

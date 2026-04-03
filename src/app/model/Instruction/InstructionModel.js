@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 const InstructionsSchema = mongoose.Schema({
-  description: {
-    type: String,
+  instruction: {
+    type: [String],
   },
 });
 
